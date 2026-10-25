@@ -27,7 +27,7 @@ steps:
   - name: Setup Gradle
     uses: gradle/actions/setup-gradle@v4
 
-  - name: Find Android Project
+  - name: Detect Android Project
     id: project
     shell: bash
     run: |
@@ -40,13 +40,13 @@ steps:
       elif [ -f "komiktaandroid/settings.gradle.kts" ] && [ -d "komiktaandroid/app" ]; then
         echo "dir=komiktaandroid" >> "$GITHUB_OUTPUT"
       else
-        echo "Android project not found."
-        echo "Check the repository root and project folder."
+        echo "Android project not found in repository root or komiktaandroid/"
         exit 1
       fi
 
   - name: Build Debug APK
     working-directory: ${{ steps.project.outputs.dir }}
+    shell: bash
     run: |
       if [ -f "./gradlew" ]; then
         chmod +x ./gradlew
@@ -55,11 +55,10 @@ steps:
         gradle --no-daemon assembleDebug
       fi
 
-  - name: Upload APK Artifact
+  - name: Upload APK
     uses: actions/upload-artifact@v4
     with:
       name: Komikta-APK
-      path: |
-        ${{ steps.project.outputs.dir }}/app/build/outputs/apk/debug/*.apk
+      path: ${{ steps.project.outputs.dir }}/app/build/outputs/apk/debug/*.apk
       if-no-files-found: error
       retention-days: 7
