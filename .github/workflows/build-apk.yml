@@ -6,12 +6,15 @@ on:
   workflow_dispatch:
     inputs:
       api_url:
-        description: "URL backend (wajib pakai trailing slash, contoh https://domain.com/)"
+        description: "URL backend (pakai trailing slash, contoh https://domain.com/)"
         required: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: komiktaandroid
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Komikta-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: komiktaandroid/app/build/outputs/apk/debug/*.apk
